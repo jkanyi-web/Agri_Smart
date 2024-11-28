@@ -27,6 +27,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Gmail setup
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'jkanyi757@gmail.com'
+EMAIL_HOST_PASSWORD = 'VictorKanyi'
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 
 # Application definition
 
@@ -38,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -125,6 +140,21 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+# Redirect URLs after login and logout
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
+# MPesa settings
+MPESA_CONSUMER_KEY = 'uidAHnS8qSBgOOwI5bVgxm0Me2jaFpBGxCvuBWSGz9hcG8XV'
+MPESA_CONSUMER_SECRET = 't48j0PLsNG06UBZLIXaK6mhJk53dW2frbsesAZtCa0vdnuRDm5cdGgodoPbHsceN'
+MPESA_SHORTCODE = '174379'
+MPESA_PASSWORD = 'MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjQxMTI3MTcwMzQ3'
+MPESA_TIMESTAMP = '20241127170347'
+MPESA_CALLBACK_URL = 'http://127.0.0.1:8000/mpesa/callback'
+
+# OpenWeather API key
+OPENWEATHER_API_KEY = '0b816149e52f7ebcc24ba3e4d8f9d033'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

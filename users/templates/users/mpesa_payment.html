@@ -1,0 +1,19 @@
+<!-- users/templates/users/mpesa_payment.html -->
+
+{% extends 'users/base.html' %}
+
+{% block title %}Mpesa Payment{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4 text-center mb-5">Initiate Mpesa Payment</h2>
+  <form method="post" action="{% url 'mpesa_payment' %}">
+      {% csrf_token %}
+      <div class="form-group">
+          <input type="text" class="form-control form-control-lg" id="phone_number" name="phone_number" placeholder="Phone Number" required>
+      </div>
+      <div class="form-group">
+          <input type="number" class="form-control form-control-lg" id="amount" name="amount" placeholder="Amount" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Pay with MPesa</button>
+  </form>
+{% endblock %}
