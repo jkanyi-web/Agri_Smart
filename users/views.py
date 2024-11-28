@@ -1,3 +1,5 @@
+# users/views.py
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -10,9 +12,34 @@ import json
 from django.core.mail import send_mail
 from django.conf import settings
 from .tasks import send_registration_email
+import logging
+
+logger = logging.getLogger(__name__)
+
+def register(request):
+    logger.info("Register view called")
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        profile_form = UserProfileForm(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            logger.info("Forms are valid")
+            return _create_user_and_profile(user_form, profile_form, request)
+        else:
+            logger.warning("Forms are not valid")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                errors = {**user_form.errors, **profile_form.errors}
+                return JsonResponse({'errors': errors}, status=400)
+            else:
+                return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form})
+    else:
+        user_form = UserRegistrationForm()
+        profile_form = UserProfileForm()
+    
+    return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form})
 
 def _create_user_and_profile(user_form, profile_form, request):
     try:
+        logger.info("Creating user and profile")
         user = user_form.save(commit=False)
         user.set_password(user_form.cleaned_data['password'])
         user.save()
@@ -20,27 +47,18 @@ def _create_user_and_profile(user_form, profile_form, request):
         profile.user = user
         profile.save()
         login(request, user)
+        logger.info("User and profile created, sending email")
         send_registration_email.delay(user.id)
-        return JsonResponse({'redirect_url': '/'}, status=200)  # Redirect to home page
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'redirect_url': '/'}, status=200)
+        else:
+            return redirect('home')
     except Exception as e:
-        # Log the error
-        print(f"Error creating user and profile: {e}")
-        return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
-
-def _create_user_and_profile(user_form, profile_form, request):
-    try:
-        user = user_form.save(commit=False)
-        user.set_password(user_form.cleaned_data['password'])
-        user.save()
-        profile = profile_form.save(commit=False)
-        profile.user = user
-        profile.save()
-        login(request, user)
-        send_registration_email(user)
-        return JsonResponse({'redirect_url': '/'}, status=200)
-    except Exception as e:
-        print(f"Error creating user and profile: {e}")
-        return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
+        logger.error(f"Error creating user and profile: {e}")
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
+        else:
+            return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form, 'errors': {'__all__': [str(e)]}})
 
 def weather_view(request):
     if request.user.is_authenticated:
