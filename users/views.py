@@ -12,7 +12,6 @@ import json
 from django.core.mail import send_mail
 from django.conf import settings
 from .email_utils import send_registration_email  # Import the new email utility function
-from .tasks import send_registration_email
 import logging
 
 logger = logging.getLogger(__name__)
@@ -48,7 +47,7 @@ def _create_user_and_profile(user_form, profile_form, request):
         profile.save()
         login(request, user)
         logger.info("User and profile created, scheduling email")
-        send_registration_email(user.email)
+        send_registration_email(user.email)  # Schedule the background task
         logger.info("Redirecting to home page")
         return redirect('home')
     except Exception as e:
