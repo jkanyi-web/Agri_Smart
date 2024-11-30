@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.mail import send_mail
 from django.conf import settings
+from .email_utils import send_registration_email  # Import the new email utility function
 from .tasks import send_registration_email
 import logging
 
@@ -19,23 +20,22 @@ logger = logging.getLogger(__name__)
 def register(request):
     logger.info("Register view called")
     if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
-            logger.info("Forms are valid")
-            return _create_user_and_profile(user_form, profile_form, request)
-        else:
-            logger.warning("Forms are not valid")
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                errors = {**user_form.errors, **profile_form.errors}
-                return JsonResponse({'errors': errors}, status=400)
-            else:
-                return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form})
-    else:
-        user_form = UserRegistrationForm()
-        profile_form = UserProfileForm()
-    
+        return _handle_post_request(request)
+    user_form = UserRegistrationForm()
+    profile_form = UserProfileForm()
     return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form})
+
+def _handle_post_request(request):
+    user_form = UserRegistrationForm(request.POST)
+    profile_form = UserProfileForm(request.POST)
+    if user_form.is_valid() and profile_form.is_valid():
+        logger.info("Forms are valid")
+        return _create_user_and_profile(user_form, profile_form, request)
+    logger.warning("Forms are not valid")
+    if request.headers.get('x-requested-with') != 'XMLHttpRequest':
+        return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form})
+    errors = {**user_form.errors, **profile_form.errors}
+    return JsonResponse({'errors': errors}, status=400)
 
 def _create_user_and_profile(user_form, profile_form, request):
     try:
@@ -47,18 +47,13 @@ def _create_user_and_profile(user_form, profile_form, request):
         profile.user = user
         profile.save()
         login(request, user)
-        logger.info("User and profile created, sending email")
-        send_registration_email.delay(user.id)
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'redirect_url': '/'}, status=200)
-        else:
-            return redirect('home')
+        logger.info("User and profile created, scheduling email")
+        send_registration_email(user.email)
+        logger.info("Redirecting to home page")
+        return redirect('home')
     except Exception as e:
         logger.error(f"Error creating user and profile: {e}")
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
-        else:
-            return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form, 'errors': {'__all__': [str(e)]}})
+        return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form, 'errors': {'__all__': [str(e)]}})
 
 def weather_view(request):
     if request.user.is_authenticated:
@@ -81,13 +76,6 @@ def mpesa_payment_view(request):
 
 def mpesa_payment_form_view(request):
     return render(request, 'users/mpesa_payment.html')
-
-def send_registration_email(user):
-    subject = 'Welcome to AgriSmart'
-    message = f'Hi {user.username}, thank you for registering at AgriSmart.'
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [user.email]
-    send_mail(subject, message, email_from, recipient_list)
 
 @login_required
 def profile_view(request):
