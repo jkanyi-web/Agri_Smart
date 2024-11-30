@@ -16,6 +16,12 @@ class UserRegistrationForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'placeholder': 'Email', 'class': 'form-control form-control-lg', 'type': 'email'}),
         }
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email is already in use.")
+        return email
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
