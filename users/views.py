@@ -1,17 +1,17 @@
-# users/views.py
-
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .forms import UserRegistrationForm, UserProfileForm
+from .models import Crop, ForumPost, ForumComment, CropListing
+from .forms import UserRegistrationForm, UserProfileForm, CropForm, ForumPostForm, ForumCommentForm, CropListingForm
 from .weather_service import get_weather_data
 from .mpesa_service import initiate_mpesa_payment
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.mail import send_mail
 from django.conf import settings
-from .email_utils import send_registration_email  # Import the new email utility function
+from .email_utils import send_registration_email
+from .analytics import predict_yield, provide_actionable_insights
 import logging
 
 logger = logging.getLogger(__name__)
@@ -65,14 +65,45 @@ def weather_view(request):
 def home_view(request):
     return render(request, 'users/home.html')
 
+@csrf_exempt
 def mpesa_payment_view(request):
-    if request.method == 'POST':
-        phone_number = request.POST.get('phone_number')
-        amount = request.POST.get('amount')
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+    try:
+        data = json.loads(request.body)
+        phone_number = data.get('phone_number')
+        amount = data.get('amount')
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    if not phone_number or not amount:
+        return JsonResponse({'error': 'Phone number and amount are required'}, status=400)
+    
+    # Validate and format phone number
+    if phone_number.startswith('0'):
+        phone_number = f'254{phone_number[1:]}'
+    elif phone_number.startswith('+'):
+        phone_number = phone_number[1:]
+    elif not phone_number.startswith('254'):
+        return JsonResponse({'error': 'Invalid phone number format'}, status=400)
+    
+    # Validate amount
+    try:
+        amount = float(amount)
+        if amount <= 0:
+            return JsonResponse({'error': 'Amount must be a positive number'}, status=400)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid amount'}, status=400)
+    
+    # Initiate MPesa payment
+    try:
         response = initiate_mpesa_payment(phone_number, amount)
         return JsonResponse(response)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
+    except Exception as e:
+        logger.error(f"Error initiating MPesa payment: {e}")
+        return JsonResponse({'error': 'Failed to initiate MPesa payment'}, status=500)
+    
 def mpesa_payment_form_view(request):
     return render(request, 'users/mpesa_payment.html')
 
@@ -93,11 +124,142 @@ def profile_update_view(request):
         form = UserProfileForm(instance=profile)
     return render(request, 'users/profile_update.html', {'form': form})
 
+@login_required
+def add_crop(request):
+    if request.method == 'POST':
+        form = CropForm(request.POST)
+        if form.is_valid():
+            crop = form.save(commit=False)
+            crop.user = request.user
+            crop.save()
+            return redirect('crop_list')
+    else:
+        form = CropForm()
+    return render(request, 'users/add_crop.html', {'form': form})
+
+@login_required
+def crop_list(request):
+    crops = Crop.objects.filter(user=request.user)
+    return render(request, 'users/crop_list.html', {'crops': crops})
+
+@login_required
+def crop_detail(request, crop_id):
+    crop = get_object_or_404(Crop, id=crop_id, user=request.user)
+    yield_prediction = predict_yield(crop)
+    insights = provide_actionable_insights(crop)
+    return render(request, 'users/crop_detail.html', {'crop': crop, 'yield_prediction': yield_prediction, 'insights': insights})
+
+@login_required
+def edit_crop(request, crop_id):
+    crop = get_object_or_404(Crop, id=crop_id, user=request.user)
+    if request.method == 'POST':
+        form = CropForm(request.POST, instance=crop)
+        if form.is_valid():
+            form.save()
+            return redirect('crop_list')
+    else:
+        form = CropForm(instance=crop)
+    return render(request, 'users/edit_crop.html', {'form': form})
+
+@login_required
+def delete_crop(request, crop_id):
+    crop = get_object_or_404(Crop, id=crop_id, user=request.user)
+    if request.method == 'POST':
+        crop.delete()
+        return redirect('crop_list')
+    return render(request, 'users/delete_crop.html', {'crop': crop})
+
+@login_required
+def forum(request):
+    posts = ForumPost.objects.all()
+    return render(request, 'users/forum.html', {'posts': posts})
+
+@login_required
+def add_post(request):
+    if request.method == 'POST':
+        form = ForumPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            return redirect('forum')
+    else:
+        form = ForumPostForm()
+    return render(request, 'users/add_post.html', {'form': form})
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(ForumPost, id=post_id)
+    if request.method == 'POST':
+        form = ForumCommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            comment.save()
+            return redirect('forum')
+    else:
+        form = ForumCommentForm()
+    return render(request, 'users/add_comment.html', {'form': form, 'post': post})
+
+@login_required
+def add_listing(request):
+    if request.method == 'POST':
+        form = CropListingForm(request.POST)
+        if form.is_valid():
+            listing = form.save(commit=False)
+            listing.user = request.user
+            listing.save()
+            return redirect('listing_list')
+    else:
+        form = CropListingForm()
+    return render(request, 'users/add_listing.html', {'form': form})
+
+@login_required
+def listing_list(request):
+    listings = CropListing.objects.all()
+    return render(request, 'users/listing_list.html', {'listings': listings})
+
+@login_required
+def edit_listing(request, listing_id):
+    listing = get_object_or_404(CropListing, id=listing_id, user=request.user)
+    if request.method == 'POST':
+        form = CropListingForm(request.POST, instance=listing)
+        if form.is_valid():
+            form.save()
+            return redirect('listing_list')
+    else:
+        form = CropListingForm(instance=listing)
+    return render(request, 'users/edit_listing.html', {'form': form})
+
+@login_required
+def delete_listing(request, listing_id):
+    listing = get_object_or_404(CropListing, id=listing_id, user=request.user)
+    if request.method == 'POST':
+        listing.delete()
+        return redirect('listing_list')
+    return render(request, 'users/delete_listing.html', {'listing': listing})
+
 @csrf_exempt
 def mpesa_callback_view(request):
+    logger.info("MPesa callback view called")
+    logger.info(f"Request method: {request.method}")
+    logger.info(f"Request headers: {request.headers}")
+    logger.info(f"Request body: {request.body}")
+
     if request.method == 'POST':
-        mpesa_response = json.loads(request.body.decode('utf-8'))
-        # Process the MPesa response here
-        print(mpesa_response)  # For debugging purposes
-        return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
-    return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid request"}, status=400)
+        try:
+            logger.info("Processing MPesa callback")
+            mpesa_response = json.loads(request.body.decode('utf-8'))
+            # Process the MPesa response here
+            logger.info(f"MPesa response: {mpesa_response}")
+            return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error: {e}")
+            return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid JSON format"}, status=400)
+    elif request.method == 'GET':
+        logger.warning("GET request received at MPesa callback URL")
+        return JsonResponse({"ResultCode": 1, "ResultDesc": "This endpoint is for POST requests only"}, status=400)
+    else:
+        logger.warning("Invalid request method")
+        return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid request"}, status=400)

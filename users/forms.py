@@ -1,8 +1,6 @@
-# users/forms.py
-
 from django import forms
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Crop, ForumPost, ForumComment, CropListing
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'form-control form-control-lg'}))
@@ -36,5 +34,25 @@ class UserProfileForm(forms.ModelForm):
         fields = ['farm_location', 'farm_size']
         widgets = {
             'farm_location': forms.TextInput(attrs={'placeholder': 'Farm Location', 'class': 'form-control form-control-lg'}),
-            'farm_size': forms.NumberInput(attrs={'placeholder': 'Farm Size', 'class': 'form-control form-control-lg'}),
+            'farm_size': forms.NumberInput(attrs={'placeholder': 'Farm Size(Acres)', 'class': 'form-control form-control-lg'}),
         }
+        
+class CropForm(forms.ModelForm):
+    class Meta:
+        model = Crop
+        fields = ['name', 'planting_date', 'growth_stage', 'next_activity', 'next_activity_date']
+
+class ForumPostForm(forms.ModelForm):
+    class Meta:
+        model = ForumPost
+        fields = ['title', 'content']
+
+class ForumCommentForm(forms.ModelForm):
+    class Meta:
+        model = ForumComment
+        fields = ['content']
+
+class CropListingForm(forms.ModelForm):
+    class Meta:
+        model = CropListing
+        fields = ['crop', 'price', 'quantity']

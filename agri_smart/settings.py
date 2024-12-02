@@ -19,7 +19,11 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'c5da-102-210-29-6.ngrok-free.app',
+]
 
 # Email setup
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -58,7 +62,9 @@ ROOT_URLCONF = 'agri_smart.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'users' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,6 +139,7 @@ LOGOUT_REDIRECT_URL = 'home'
 MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY')
 MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET')
 MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE')
+MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
 MPESA_PASSWORD = os.getenv('MPESA_PASSWORD')
 MPESA_TIMESTAMP = os.getenv('MPESA_TIMESTAMP')
 MPESA_CALLBACK_URL = os.getenv('MPESA_CALLBACK_URL')

@@ -1,0 +1,12 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Edit Crop{% endblock %}
+
+{% block content %}
+  <h1>Edit Crop</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Crop</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Add Crop{% endblock %}
+
+{% block content %}
+  <h1>Add Crop</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary btn-block btn-lg">Add Crop</button>
+  </form>
+{% endblock %}

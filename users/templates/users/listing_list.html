@@ -1,0 +1,17 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Listing List{% endblock %}
+
+{% block content %}
+  <h1>Listing List</h1>
+  <ul>
+    {% for listing in listings %}
+      <li>
+        <a href="{% url 'listing_detail' listing.id %}">{{ listing.crop.name }}</a> - {{ listing.quantity }} kg - ${{ listing.price }}
+        <a href="{% url 'edit_listing' listing.id %}">Edit</a>
+        <a href="{% url 'delete_listing' listing.id %}">Delete</a>
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'add_listing' %}">Add Listing</a>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Delete Crop{% endblock %}
+
+{% block content %}
+  <h1>Delete Crop</h1>
+  <p>Are you sure you want to delete {{ crop.name }}?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+  </form>
+  <a href="{% url 'crop_list' %}">Cancel</a>
+{% endblock %}

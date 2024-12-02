@@ -1,0 +1,17 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Crop Details{% endblock %}
+
+{% block content %}
+    <h1>{{ crop.name }}</h1>
+    <p>Planting Date: {{ crop.planting_date }}</p>
+    <p>Growth Stage: {{ crop.growth_stage }}</p>
+    <p>Next Activity: {{ crop.next_activity }} on {{ crop.next_activity_date }}</p>
+    <h2>{{ yield_prediction }}</h2>
+    <h3>Actionable Insights</h3>
+    <ul>
+        {% for recommendation in insights.recommendations %}
+            <li>{{ recommendation }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

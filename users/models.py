@@ -10,3 +10,42 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Crop(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    planting_date = models.DateField()
+    growth_stage = models.CharField(max_length=255)
+    next_activity = models.CharField(max_length=255)
+    next_activity_date = models.DateField()
+
+    def __str__(self):
+        return self.name
+
+class ForumPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class ForumComment(models.Model):
+    post = models.ForeignKey(ForumPost, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.post.title}"
+
+class CropListing(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    crop = models.ForeignKey(Crop, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.crop.name} - {self.quantity} kg"

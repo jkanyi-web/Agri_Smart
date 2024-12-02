@@ -1,0 +1,12 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Add Comment{% endblock %}
+
+{% block content %}
+  <h1>Add Comment to {{ post.title }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary btn-block btn-lg">Add Comment</button>
+  </form>
+{% endblock %}

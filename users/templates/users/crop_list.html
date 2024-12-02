@@ -1,0 +1,13 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Crop List{% endblock %}
+
+{% block content %}
+  <h1>Crop List</h1>
+  <ul>
+    {% for crop in crops %}
+      <li><a href="{% url 'crop_detail' crop.id %}">{{ crop.name }}</a></li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'add_crop' %}">Add Crop</a>
+{% endblock %}

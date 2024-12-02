@@ -7,6 +7,6 @@
   <p><strong>Username:</strong> {{ profile.user.username }}</p>
   <p><strong>Email:</strong> {{ profile.user.email }}</p>
   <p><strong>Farm Location:</strong> {{ profile.farm_location }}</p>
-  <p><strong>Farm Size:</strong> {{ profile.farm_size }}</p>
+  <p><strong>Farm Size:</strong> {{ profile.farm_size }} acres</p>
   <a href="{% url 'profile_update' %}" class="btn btn-primary">Edit Profile</a>
 {% endblock %}
