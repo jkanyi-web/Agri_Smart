@@ -1,5 +1,16 @@
 body {
-    padding-top: 56px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navbar {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.container {
+    margin-top: 0;
 }
 
 .register-container {

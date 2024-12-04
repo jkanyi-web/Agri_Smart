@@ -84,9 +84,6 @@ def activate(request, uidb64, token):
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
-    
-from django.shortcuts import render
-from .models import Crop, ForumPost, MarketplaceListing
 
 def home_view(request):
     featured_crops = Crop.objects.all()[:3]  # Get the first 3 crops
