@@ -3,6 +3,60 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-  <h2 class="mb-4">Welcome to AgriSmart</h2>
-  <p>This is the home page.</p>
+  <div class="container">
+    <h2 class="mb-4">Welcome to AgriSmart</h2>
+    <p>This is the home page.</p>
+
+    <!-- Featured Crops Section -->
+    <div class="featured-crops mt-5">
+      <h3>Featured Crops</h3>
+      <div class="row">
+        {% for crop in featured_crops %}
+          <div class="col-md-4">
+            <div class="card mb-4">
+              <img src="{{ crop.image.url }}" class="card-img-top" alt="{{ crop.name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ crop.name }}</h5>
+                <p class="card-text">{{ crop.description|truncatewords:20 }}</p>
+                <a href="{% url 'crop_detail' crop.id %}" class="btn btn-primary">View Details</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Recent Posts Section -->
+    <div class="recent-posts mt-5">
+      <h3>Recent Posts</h3>
+      <div class="list-group">
+        {% for post in recent_posts %}
+          <a href="{% url 'forum' %}#post-{{ post.id }}" class="list-group-item list-group-item-action">
+            <h5 class="mb-1">{{ post.title }}</h5>
+            <p class="mb-1">{{ post.content|truncatewords:20 }}</p>
+            <small>Posted by {{ post.author.username }} on {{ post.created_at|date:"F j, Y" }}</small>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Marketplace Listings Section -->
+    <div class="marketplace-listings mt-5">
+      <h3>Marketplace Listings</h3>
+      <div class="row">
+        {% for listing in marketplace_listings %}
+          <div class="col-md-4">
+            <div class="card mb-4">
+              <img src="{{ listing.image.url }}" class="card-img-top" alt="{{ listing.title }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ listing.title }}</h5>
+                <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
+                <a href="{% url 'listing_detail' listing.id %}" class="btn btn-primary">View Details</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 {% endblock %}

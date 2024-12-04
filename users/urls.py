@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views import (
-    register, weather_view, home_view, mpesa_payment_view, mpesa_callback_view, mpesa_payment_form_view,
+    register, activate, weather_view, home_view, mpesa_payment_view, mpesa_callback_view, mpesa_payment_form_view,
     profile_view, profile_update_view, crop_list, add_crop, crop_detail, edit_crop, delete_crop,
     listing_list, add_listing, edit_listing, delete_listing, forum, add_post, add_comment
 )
@@ -10,6 +10,7 @@ from .api_views import UserListCreateView, UserProfileListCreateView
 urlpatterns = [
     path('', home_view, name='home'),
     path('register/', register, name='register'),
+    path('activate/<uidb64>/<token>/', activate, name='activate'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('weather/', weather_view, name='weather'),

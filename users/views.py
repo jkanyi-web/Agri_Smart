@@ -13,6 +13,13 @@ from django.conf import settings
 from .email_utils import send_registration_email
 from .analytics import predict_yield, provide_actionable_insights
 import logging
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
 
 logger = logging.getLogger(__name__)
 
@@ -40,19 +47,58 @@ def _create_user_and_profile(user_form, profile_form, request):
     try:
         logger.info("Creating user and profile")
         user = user_form.save(commit=False)
+        user.is_active = False  # Deactivate account until it is confirmed
         user.set_password(user_form.cleaned_data['password'])
         user.save()
         profile = profile_form.save(commit=False)
         profile.user = user
         profile.save()
-        login(request, user)
-        logger.info("User and profile created, scheduling email")
-        send_registration_email(user.email)  # Schedule the background task
-        logger.info("Redirecting to home page")
-        return redirect('home')
+        current_site = get_current_site(request)
+        mail_subject = 'Welcome to AgriSmart! Activate your account'
+        message = render_to_string('registration/acc_active_email.html', {
+            'user': user,
+            'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            'token': default_token_generator.make_token(user),
+        })
+        to_email = user_form.cleaned_data.get('email')
+        send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, [to_email])
+        return render(request, 'registration/registration_complete.html')
     except Exception as e:
         logger.error(f"Error creating user and profile: {e}")
         return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form, 'errors': {'__all__': [str(e)]}})
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is None or not default_token_generator.check_token(user, token):
+        return render(request, 'registration/activation_invalid.html')
+    
+    user.is_active = True
+    user.save()
+    login(request, user)
+    return redirect('home')
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+    
+from django.shortcuts import render
+from .models import Crop, ForumPost, MarketplaceListing
+
+def home_view(request):
+    featured_crops = Crop.objects.all()[:3]  # Get the first 3 crops
+    recent_posts = ForumPost.objects.order_by('-created_at')[:5]  # Get the 5 most recent posts
+    marketplace_listings = CropListing.objects.all()[:3]  # Get the first 3 listings
+
+    context = {
+        'featured_crops': featured_crops,
+        'recent_posts': recent_posts,
+        'marketplace_listings': marketplace_listings,
+    }
+    return render(request, 'users/home.html', context)
 
 def weather_view(request):
     if request.user.is_authenticated:
