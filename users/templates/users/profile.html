@@ -1,12 +1,25 @@
 {% extends 'users/base.html' %}
+{% load static %}
 
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-  <h2 class="mb-4">Profile</h2>
-  <p><strong>Username:</strong> {{ profile.user.username }}</p>
-  <p><strong>Email:</strong> {{ profile.user.email }}</p>
-  <p><strong>Farm Location:</strong> {{ profile.farm_location }}</p>
-  <p><strong>Farm Size:</strong> {{ profile.farm_size }} acres</p>
-  <a href="{% url 'profile_update' %}" class="btn btn-primary">Edit Profile</a>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="mb-4 text-center">Profile</h2>
+            <p class="card-text text-center mt-2"><strong>Username:</strong> {{ profile.user.username }}</p>
+            <p class="card-text text-center mt-2"><strong>Email:</strong> {{ profile.user.email }}</p>
+            <p class="card-text text-center mt-2"><strong>Farm Location:</strong> {{ profile.farm_location }}</p>
+            <p class="card-text text-center mt-2"><strong>Farm Size:</strong> {{ profile.farm_size }} acres</p>
+            <div class="text-center">
+              <a href="{% url 'profile_update' %}" class="btn btn-primary mt-4">Edit Profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

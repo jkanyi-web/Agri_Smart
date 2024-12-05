@@ -4,7 +4,7 @@
 
 {% block content %}
   <div class="register-container">
-    <h2 class="mb-4 text-center mb-5">Login</h2>
+    <h2 class="mb-4 text-center">Login</h2>
     <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
         <div class="form-group">
@@ -15,8 +15,8 @@
         </div>
         <button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>
     </form>
-    <p class="text-center mt-3">
-      Don't have an account? <a href="{% url 'register' %}">Register here</a>
+    <p class="text-center mt-5">
+      Don't have an account? <a class="btn btn-primary" href="{% url 'register' %}">Register here</a>
     </p>
   </div>
 {% endblock %}

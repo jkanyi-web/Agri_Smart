@@ -1,12 +1,35 @@
 {% extends 'users/base.html' %}
+{% load static %}
 
 {% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-  <h2 class="mb-4">Edit Profile</h2>
-  <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Save Changes</button>
-  </form>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2 class="mb-4 text-center">Edit Profile</h2>
+        <form method="post" class="needs-validation" novalidate>
+          {% csrf_token %}
+          <div class="form-group">
+            {{ form.farm_location }}
+            <div class="invalid-feedback">
+              Please provide a valid farm location.
+            </div>
+          </div>
+          <div class="form-group">
+            {{ form.farm_size }}
+            <div class="invalid-feedback">
+              Please provide a valid farm size.
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/form-validation.js' %}"></script>
+  <script src="{% static 'js/tooltips.js' %}"></script>
 {% endblock %}

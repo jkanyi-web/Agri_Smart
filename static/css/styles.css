@@ -2,11 +2,13 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    padding-top: 56px;
 }
 
 .navbar {
     margin-top: 0;
     margin-bottom: 0;
+    position: fixed;
 }
 
 .container {

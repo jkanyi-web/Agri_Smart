@@ -5,6 +5,13 @@
 {% block content %}
   <div class="container">
     <h2 class="mb-4">Welcome to AgriSmart</h2>
+    <p>AgriSmart is your smart agriculture assistant designed to help farmers and agricultural enthusiasts achieve their goals. Our platform provides tools and resources to manage crops, connect with other farmers, access the marketplace, and stay updated with the latest weather forecasts. Whether you're a seasoned farmer or just starting out, AgriSmart is here to support you every step of the way.</p>
+
+    <!-- About Us Section -->
+    <div class="about-us mt-5">
+      <h3>About Us</h3>
+      <p>AgriSmart is dedicated to revolutionizing the agricultural industry by providing innovative solutions and resources to farmers. Our mission is to empower farmers with the tools they need to increase productivity, improve crop management, and connect with the agricultural community. We believe in the power of technology to transform agriculture and are committed to making a positive impact on the lives of farmers worldwide.</p>
+    </div>
 
     <!-- Featured Crops Section -->
     <div class="featured-crops mt-5">
@@ -13,10 +20,8 @@
         {% for crop in featured_crops %}
           <div class="col-md-4">
             <div class="card mb-4">
-              <img src="{{ crop.image.url }}" class="card-img-top" alt="{{ crop.name }}">
               <div class="card-body">
                 <h5 class="card-title">{{ crop.name }}</h5>
-                <p class="card-text">{{ crop.description|truncatewords:20 }}</p>
                 <a href="{% url 'crop_detail' crop.id %}" class="btn btn-primary">View Details</a>
               </div>
             </div>
@@ -30,10 +35,10 @@
       <h3>Recent Posts</h3>
       <div class="list-group">
         {% for post in recent_posts %}
-          <a href="{% url 'forum' %}#post-{{ post.id }}" class="list-group-item list-group-item-action">
+          <a href="{% url 'forum_post_detail' post.id %}" class="list-group-item list-group-item-action">
             <h5 class="mb-1">{{ post.title }}</h5>
             <p class="mb-1">{{ post.content|truncatewords:20 }}</p>
-            <small>Posted by {{ post.author.username }} on {{ post.created_at|date:"F j, Y" }}</small>
+            <small>Posted by {{ post.user.username }} on {{ post.created_at|date:"F j, Y" }}</small>
           </a>
         {% endfor %}
       </div>
@@ -46,10 +51,8 @@
         {% for listing in marketplace_listings %}
           <div class="col-md-4">
             <div class="card mb-4">
-              <img src="{{ listing.image.url }}" class="card-img-top" alt="{{ listing.title }}">
               <div class="card-body">
-                <h5 class="card-title">{{ listing.title }}</h5>
-                <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
+                <h5 class="card-title">{{ listing.crop.name }}</h5>
                 <a href="{% url 'listing_detail' listing.id %}" class="btn btn-primary">View Details</a>
               </div>
             </div>

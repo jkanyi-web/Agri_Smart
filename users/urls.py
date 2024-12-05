@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from .views import (
     register, activate, weather_view, home_view, mpesa_payment_view, mpesa_callback_view, mpesa_payment_form_view,
     profile_view, profile_update_view, crop_list, add_crop, crop_detail, edit_crop, delete_crop,
-    listing_list, add_listing, edit_listing, delete_listing, forum, add_post, add_comment
+    listing_list, add_listing, edit_listing, delete_listing, listing_detail, forum, add_post, add_comment, forum_post_detail, about_view
 )
 from .api_views import UserListCreateView, UserProfileListCreateView
 
@@ -28,9 +28,12 @@ urlpatterns = [
     path('crops/<int:crop_id>/delete/', delete_crop, name='delete_crop'),
     path('marketplace/', listing_list, name='listing_list'),
     path('marketplace/add/', add_listing, name='add_listing'),
+    path('marketplace/<int:listing_id>/', listing_detail, name='listing_detail'),
     path('marketplace/<int:listing_id>/edit/', edit_listing, name='edit_listing'),
     path('marketplace/<int:listing_id>/delete/', delete_listing, name='delete_listing'),
     path('forum/', forum, name='forum'),
     path('forum/add/', add_post, name='add_post'),
+    path('forum/<int:post_id>/', forum_post_detail, name='forum_post_detail'),
     path('forum/<int:post_id>/comment/', add_comment, name='add_comment'),
+    path('about/', about_view, name='about'),
 ]

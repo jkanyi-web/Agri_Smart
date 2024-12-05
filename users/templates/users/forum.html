@@ -1,13 +1,20 @@
 {% extends 'users/base.html' %}
+{% load static %}
 
 {% block title %}Forum{% endblock %}
 
 {% block content %}
-  <h1>Forum</h1>
-  <ul>
-    {% for post in posts %}
-      <li><a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a> by {{ post.user.username }}</li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'add_post' %}">Add Post</a>
+  <div class="container mt-5">
+    <h1 class="mb-4 text-center">Forum</h1>
+    <ul class="list-group">
+      {% for post in posts %}
+        <li class="list-group-item">
+          <a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a> by {{ post.user.username }}
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="text-center mt-4">
+      <a href="{% url 'add_post' %}" class="btn btn-primary">Add Post</a>
+    </div>
+  </div>
 {% endblock %}

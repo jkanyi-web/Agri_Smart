@@ -11,21 +11,24 @@ def get_weather_data(location):
 def calculate_yield(weather_data, crop):
     if not weather_data:
         return 0
-      
+
     total_rainfall = sum(entry['rain']['3h'] for entry in weather_data['list'] if 'rain' in entry)
     avg_temperature = sum(entry['main']['temp'] for entry in weather_data['list']) / len(weather_data['list'])
-    
-    return (crop.farm_size * avg_temperature * total_rainfall) / 1000
+
+    # Access the farm_size from the related UserProfile
+    farm_size = crop.user.userprofile.farm_size
+
+    return (farm_size * avg_temperature * total_rainfall) / 1000
 
 def predict_yield(crop):
     weather_data = get_weather_data(crop.user.userprofile.farm_location)
     predicted_yield = calculate_yield(weather_data, crop)
     return f"Predicted yield: {predicted_yield:.2f} kg"
-  
+
 def provide_actionable_insights(crop):
     weather_data = get_weather_data(crop.user.userprofile.farm_location)
     predicted_yield = calculate_yield(weather_data, crop)
-    
+
     insights = {
         "predicted_yield": f"{predicted_yield:.2f} kg",
         "recommendations": []

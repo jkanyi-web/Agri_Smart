@@ -85,10 +85,17 @@ def activate(request, uidb64, token):
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
 
+from django.shortcuts import render
+from .models import Crop, ForumPost, CropListing
+
 def home_view(request):
     featured_crops = Crop.objects.all()[:3]  # Get the first 3 crops
     recent_posts = ForumPost.objects.order_by('-created_at')[:5]  # Get the 5 most recent posts
     marketplace_listings = CropListing.objects.all()[:3]  # Get the first 3 listings
+
+    print("Featured Crops:", featured_crops)
+    print("Recent Posts:", recent_posts)
+    print("Marketplace Listings:", marketplace_listings)
 
     context = {
         'featured_crops': featured_crops,
@@ -97,6 +104,9 @@ def home_view(request):
     }
     return render(request, 'users/home.html', context)
 
+def about_view(request):
+    return render(request, 'users/about.html')
+
 def weather_view(request):
     if request.user.is_authenticated:
         profile = request.user.userprofile
@@ -104,9 +114,6 @@ def weather_view(request):
         return render(request, 'users/weather.html', {'weather_data': weather_data})
     else:
         return redirect('login')
-
-def home_view(request):
-    return render(request, 'users/home.html')
 
 @csrf_exempt
 def mpesa_payment_view(request):
@@ -230,6 +237,10 @@ def add_post(request):
         form = ForumPostForm()
     return render(request, 'users/add_post.html', {'form': form})
 
+def forum_post_detail(request, post_id):
+    post = get_object_or_404(ForumPost, id=post_id)
+    return render(request, 'users/forum_post_detail.html', {'post': post})
+
 @login_required
 def add_comment(request, post_id):
     post = get_object_or_404(ForumPost, id=post_id)
@@ -262,6 +273,11 @@ def add_listing(request):
 def listing_list(request):
     listings = CropListing.objects.all()
     return render(request, 'users/listing_list.html', {'listings': listings})
+
+@login_required
+def listing_detail(request, listing_id):
+    listing = get_object_or_404(CropListing, id=listing_id)
+    return render(request, 'users/listing_detail.html', {'listing': listing})
 
 @login_required
 def edit_listing(request, listing_id):
