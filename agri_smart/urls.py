@@ -20,6 +20,7 @@ from users.views import home_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home_view, name='home'),
     path('users/', include('users.urls')),
-    path('', home_view, name='home',)
+    path('__debug__/', include('debug_toolbar.urls')),
 ]

@@ -1,28 +1,22 @@
 {% extends 'users/base.html' %}
 {% load static %}
 
-{% block title %}Edit Profile{% endblock %}
+{% block title %}Add Comment{% endblock %}
 
 {% block content %}
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-8">
-        <h2 class="mb-4 text-center">Edit Profile</h2>
+        <h1 class="mb-4 text-center">Add Comment to {{ post.title }}</h1>
         <form method="post" class="needs-validation" novalidate>
           {% csrf_token %}
           <div class="form-group">
-            {{ form.farm_location }}
+            {{ form.content }}
             <div class="invalid-feedback">
-              Please provide a valid farm location.
+              Please provide a comment.
             </div>
           </div>
-          <div class="form-group">
-            {{ form.farm_size }}
-            <div class="invalid-feedback">
-              Please provide a valid farm size.
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Save Changes</button>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Add Comment</button>
         </form>
       </div>
     </div>

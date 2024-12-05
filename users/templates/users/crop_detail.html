@@ -1,0 +1,37 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Crop Details{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h1 class="mb-2 text-center">{{ crop.name }}</h1>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h3 class="card-title text-center">Crop Information</h3>
+            <p class="card-text text-center"><strong>Planting Date:</strong> {{ crop.planting_date }}</p>
+            <p class="card-text text-center"><strong>Growth Stage:</strong> {{ crop.growth_stage }}</p>
+            <p class="card-text text-center"><strong>Next Activity:</strong> {{ crop.next_activity }} on {{ crop.next_activity_date }}</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h3 class="card-title text-center">Yield Prediction</h3>
+            <p class="card-text text-center">{{ yield_prediction }}</p>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h3 class="card-title text-center">Actionable Insights</h3>
+            <ul class="text-center list-group list-group-flush">
+              {% for recommendation in insights.recommendations %}
+                <li class="list-group-item">{{ recommendation }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
