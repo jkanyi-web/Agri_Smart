@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Crop, ForumPost, ForumComment, CropListing
+from .models import Crop, ForumPost, ForumComment, CropListing, TransactionRecord
 from .forms import UserRegistrationForm, UserProfileForm, CropForm, ForumPostForm, ForumCommentForm, CropListingForm
 from .weather_service import get_weather_data
 from .mpesa_service import initiate_mpesa_payment
@@ -115,44 +115,61 @@ def weather_view(request):
     else:
         return redirect('login')
 
+
 @csrf_exempt
+@login_required
 def mpesa_payment_view(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request'}, status=400)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            phone_number = data.get('phone_number')
+            amount = data.get('amount')
+            listing_id = data.get('listing_id')
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error: {e}")
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    try:
-        data = json.loads(request.body)
-        phone_number = data.get('phone_number')
-        amount = data.get('amount')
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        if not phone_number or not amount or not listing_id:
+            logger.error("Missing required fields")
+            return JsonResponse({'error': 'Phone number, amount, and listing ID are required'}, status=400)
 
-    if not phone_number or not amount:
-        return JsonResponse({'error': 'Phone number and amount are required'}, status=400)
-    
-    # Validate and format phone number
-    if phone_number.startswith('0'):
-        phone_number = f'254{phone_number[1:]}'
-    elif phone_number.startswith('+'):
-        phone_number = phone_number[1:]
-    elif not phone_number.startswith('254'):
-        return JsonResponse({'error': 'Invalid phone number format'}, status=400)
-    
-    # Validate amount
-    try:
-        amount = float(amount)
-        if amount <= 0:
-            return JsonResponse({'error': 'Amount must be a positive number'}, status=400)
-    except ValueError:
-        return JsonResponse({'error': 'Invalid amount'}, status=400)
-    
-    # Initiate MPesa payment
-    try:
-        response = initiate_mpesa_payment(phone_number, amount)
-        return JsonResponse(response)
-    except Exception as e:
-        logger.error(f"Error initiating MPesa payment: {e}")
-        return JsonResponse({'error': 'Failed to initiate MPesa payment'}, status=500)
+        # Validate and format phone number
+        if phone_number.startswith('0'):
+            phone_number = f'254{phone_number[1:]}'
+        elif phone_number.startswith('+'):
+            phone_number = phone_number[1:]
+        elif not phone_number.startswith('254'):
+            logger.error("Invalid phone number format")
+            return JsonResponse({'error': 'Invalid phone number format'}, status=400)
+
+        # Validate amount
+        try:
+            amount = float(amount)
+            if amount <= 0:
+                logger.error("Amount must be a positive number")
+                return JsonResponse({'error': 'Amount must be a positive number'}, status=400)
+        except ValueError:
+            logger.error("Invalid amount")
+            return JsonResponse({'error': 'Invalid amount'}, status=400)
+
+        # Initiate MPesa payment
+        try:
+            response = initiate_mpesa_payment(phone_number, amount)
+            if 'error' not in response:
+                # Store transaction record
+                listing = get_object_or_404(CropListing, id=listing_id)
+                TransactionRecord.objects.create(
+                    user=request.user,
+                    listing=listing,
+                    phone_number=phone_number,
+                    amount=amount,
+                    transaction_id=response.get('CheckoutRequestID')
+                )
+            return JsonResponse(response)
+        except Exception as e:
+            logger.error(f"Error initiating MPesa payment: {e}")
+            return JsonResponse({'error': 'Failed to initiate MPesa payment'}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
     
 def mpesa_payment_form_view(request):
     return render(request, 'users/mpesa_payment.html')
@@ -240,6 +257,26 @@ def add_post(request):
 def forum_post_detail(request, post_id):
     post = get_object_or_404(ForumPost, id=post_id)
     return render(request, 'users/forum_post_detail.html', {'post': post})
+
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(ForumPost, id=post_id, user=request.user)
+    if request.method == 'POST':
+        form = ForumPostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('forum')
+    else:
+        form = ForumPostForm(instance=post)
+    return render(request, 'users/edit_post.html', {'form': form})
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(ForumPost, id=post_id, user=request.user)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('forum')
+    return render(request, 'users/delete_post.html', {'post': post})
 
 @login_required
 def add_comment(request, post_id):
