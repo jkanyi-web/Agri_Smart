@@ -2,14 +2,14 @@
 
 <div align="center">
 
-  <h3><b>Blog-App</b></h3>
+  <h3><b>Agri_Smart</b></h3>
 
 </div>
 
 # 📗 Table of Contents
 
 - [📗 Table of Contents](#-table-of-contents)
-- [📖 Blog Hub ](#-blog-hub-)
+- [📖 Agri_Smart ](#-agri_smart-)
   - [🛠 Built With ](#-built-with-)
     - [Tech Stack ](#tech-stack-)
     - [Key Features ](#key-features-)
@@ -28,9 +28,9 @@
 
 <!-- PROJECT DESCRIPTION -->
 
-# 📖 Blog-App <a name="about-project"></a>
+# 📖 Agri_Smart <a name="about-project"></a>
 
-Blog app that is built with Ruby on Rails. It is a simple blog app that allows users to create posts and comment on them. It also allows users to like posts. It has a simple UI that allows users to navigate through the app easily. The users have profiles that they can edit and add a profile picture to along with their name and bio.
+Agri_Smart is a comprehensive platform designed to assist farmers with various agricultural activities. It includes features such as crop management, marketplace transactions, weather updates, and MPesa payment integration. The platform aims to streamline agricultural processes and provide valuable insights to farmers.
 
 ## 🛠 Built With <a name="built-with"></a>
 
@@ -39,42 +39,40 @@ Blog app that is built with Ruby on Rails. It is a simple blog app that allows u
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href="https://rubyonrails.org">Ruby on Rails</a></li>
+    <li><a href="https://www.djangoproject.com/">Django</a></li>
   </ul>
 </details>
 
 <details>
   <summary>Server</summary>
   <ul>
-    <li><a href="https://rubyonrails.org">Ruby on Rails</a></li>
+    <li><a href="https://www.djangoproject.com/">Django</a></li>
   </ul>
 </details>
 
 <details>
 <summary>Database</summary>
   <ul>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
+    <li><a href="https://www.mysql.com/">MySQL</a></li>
   </ul>
 </details>
 
 ### Key Features <a name="key-features"></a>
 
-- Users can sign up.
-- Users can create posts.
-- Users can comment on posts.
-- Users can like posts.
-- Users can view posts.
-- Users can view comments.
+- Users can sign up and manage their profiles.
+- Users can add, edit, and delete crops.
+- Users can list crops for sale in the marketplace.
+- Users can initiate MPesa payments for marketplace transactions.
+- Users can view weather updates.
+- Users can participate in forums by creating posts and comments.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 💻 Getting Started <a name="getting-started"></a>
 
 Clone this repository to your desired folder:
+git clone git@github.com:jkanyi-web/Agri_Smart.git
 
-```
-git clone git@github.com:jkanyi-web/Blog-App.git
-```
 
 ### Prerequisites
 
@@ -87,26 +85,26 @@ In order to run this project you need:
 
 ### Setup
 
-Clone this repository to your desired  folder:
+Clone this repository to your desired folder:
 
-```
 git clone git@github.com:jkanyi-web/Agri_Smart.git
 
 cd agri_smart
-```
 
 ### Install
 
 Install this project with:
-pip install -r [requirements.txt](http://_vscodecontentref_/1)
+
+pip install -r requirements.txt
+
 
 ### Usage
 
-Use this project in the browsers of desktops and mobile devices
+Use this project in the browsers of desktops and mobile devices.
 
+1. Configure the database in `settings.py`:
 
-1. Configure the database in settings.py:
-
+    ```python
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -117,25 +115,34 @@ Use this project in the browsers of desktops and mobile devices
             'PORT': '3306',
         }
     }
+    ```
 
 2. Run the following commands to create the database and run the migrations:
   
-      python manage.py makemigrations
-      python manage.py migrate
+    ```sh
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
 
 3. Create a superuser to access the admin panel:
   
-        python manage.py createsuperuser
+    ```sh
+    python manage.py createsuperuser
+    ```
 
 4. Run the development server:
     
-          python manage.py runserver
+    ```sh
+    python manage.py runserver
+    ```
 
 5. Run Background tasks:
     
-          python manage.py process_tasks
+    ```sh
+    python manage.py process_tasks
+    ```
 
-6. Open the browser and go to http://loca
+6. Open the browser and go to `http://localhost:8000`
 
 ## 👥 Author <a name="authors"></a>
 
@@ -166,8 +173,6 @@ If you like this project, please let me know and we can improve it further. You 
 
 ## 🙏 Acknowledgments <a name="acknowledgements"></a>
 
-Acknowledgements and suggestions for improvement are always welcome
-
-- https://stackoverflow.com/questions/53510040/carrierwave-argument-error-nil-location-provided-cant-build-uri-for-an-image
+Acknowledgements and suggestions for improvement are always welcome.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
