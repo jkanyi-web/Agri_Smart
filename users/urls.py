@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from .views import (
     register, activate, weather_view, home_view, mpesa_payment_view, mpesa_callback_view, mpesa_payment_form_view,
     profile_view, profile_update_view, crop_list, add_crop, crop_detail, edit_crop, delete_crop,
-    listing_list, add_listing, edit_listing, delete_listing, listing_detail, forum, add_post, add_comment, forum_post_detail, about_view
+    listing_list, add_listing, edit_listing, delete_listing, listing_detail, forum, add_post, add_comment, forum_post_detail, edit_post, delete_post, about_view
 )
 from .api_views import UserListCreateView, UserProfileListCreateView
 
@@ -16,6 +16,7 @@ urlpatterns = [
     path('weather/', weather_view, name='weather'),
     path('api/users/', UserListCreateView.as_view(), name='api_users'),
     path('api/userprofiles/', UserProfileListCreateView.as_view(), name='api_userprofiles'),
+    path('about/', about_view, name='about'),
     path('mpesa/payment/', mpesa_payment_view, name='mpesa_payment'),
     path('mpesa/callback/', mpesa_callback_view, name='mpesa_callback'),
     path('mpesa/payment/form/', mpesa_payment_form_view, name='mpesa_payment_form'),
@@ -35,5 +36,6 @@ urlpatterns = [
     path('forum/add/', add_post, name='add_post'),
     path('forum/<int:post_id>/', forum_post_detail, name='forum_post_detail'),
     path('forum/<int:post_id>/comment/', add_comment, name='add_comment'),
-    path('about/', about_view, name='about'),
+    path('forum/edit/<int:post_id>/', edit_post, name='edit_post'),
+    path('forum/delete/<int:post_id>/', delete_post, name='delete_post'),
 ]

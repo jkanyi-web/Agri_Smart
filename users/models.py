@@ -47,3 +47,14 @@ class CropListing(models.Model):
 
     def __str__(self):
         return f"{self.crop.name} - {self.quantity} kg"
+
+class TransactionRecord(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(CropListing, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_id = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Transaction {self.transaction_id} - {self.amount} KES"

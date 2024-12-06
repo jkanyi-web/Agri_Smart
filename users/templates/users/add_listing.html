@@ -1,5 +1,4 @@
 {% extends 'users/base.html' %}
-{% load static %}
 
 {% block title %}Add Listing{% endblock %}
 
@@ -32,14 +31,9 @@
               </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Add Listing</button>
+          <button type="submit" class="btn btn-primary btn-block">Add Listing</button>
         </form>
       </div>
     </div>
   </div>
-{% endblock %}
-
-{% block scripts %}
-  <script src="{% static 'js/form-validation.js' %}"></script>
-  <script src="{% static 'js/tooltips.js' %}"></script>
 {% endblock %}

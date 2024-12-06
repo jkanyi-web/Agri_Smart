@@ -39,9 +39,6 @@
             <a class="nav-link" href="{% url 'weather' %}">Weather</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'mpesa_payment_form' %}">MPesa Payment</a>
-          </li>
-          <li class="nav-item">
             <form method="post" action="{% url 'logout' %}" class="form-inline">
               {% csrf_token %}
               <button type="submit" class="btn btn-link nav-link mt-2" style="padding: 0; border: none; background: none;">Logout</button>
@@ -73,11 +70,47 @@
       </p>
     </div>
   </footer>
+
+  <!-- MPesa Payment Modal -->
+  <div class="modal fade" id="mpesaPaymentModal" tabindex="-1" role="dialog" aria-labelledby="mpesaPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="mpesaPaymentModalLabel">Pay with MPesa</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="mpesa-payment-form" method="post" action="{% url 'mpesa_payment' %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <input type="hidden" id="listing_id" name="listing_id">
+            <div class="form-group">
+              <input type="text" class="form-control form-control-lg" id="phone_number" name="phone_number" placeholder="Phone Number" required>
+              <div class="invalid-feedback">
+                Please provide a valid phone number.
+              </div>
+            </div>
+            <div class="form-group">
+              <input type="number" class="form-control form-control-lg" id="amount" name="amount" placeholder="Amount" required>
+              <div class="invalid-feedback">
+                Please provide a valid amount.
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Pay with MPesa</button>
+          </form>
+          <div id="message" class="mt-3"></div> <!-- Ensure this element exists -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="{% static 'js/scripts.js' %}"></script>
   <script src="{% static 'js/payments.js' %}"></script>
+  <script src="{% static 'js/modal.js' %}"></script> <!-- Include the new JavaScript file -->
   {% block scripts %}{% endblock %}
 </body>
 </html>
