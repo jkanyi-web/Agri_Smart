@@ -7,31 +7,27 @@
     <h2 class="mb-4">Welcome to AgriSmart</h2>
     <p>AgriSmart is your smart agriculture assistant designed to help farmers and agricultural enthusiasts achieve their goals. Our platform provides tools and resources to manage crops, connect with other farmers, access the marketplace, and stay updated with the latest weather forecasts. Whether you're a seasoned farmer or just starting out, AgriSmart is here to support you every step of the way.</p>
 
-    <!-- About Us Section -->
-    <div class="about-us mt-5">
-      <h3>About Us</h3>
-      <p>AgriSmart is dedicated to revolutionizing the agricultural industry by providing innovative solutions and resources to farmers. Our mission is to empower farmers with the tools they need to increase productivity, improve crop management, and connect with the agricultural community. We believe in the power of technology to transform agriculture and are committed to making a positive impact on the lives of farmers worldwide.</p>
-    </div>
-
     <!-- Featured Crops Section -->
-    <div class="featured-crops mt-5">
+    <div class="featured-crops mt-4">
       <h3>Featured Crops</h3>
       <div class="row">
         {% for crop in featured_crops %}
-          <div class="col-md-4">
-            <div class="card mb-4">
-              <div class="card-body">
-                <h5 class="card-title">{{ crop.name }}</h5>
-                <a href="{% url 'crop_detail' crop.id %}" class="btn btn-primary">View Details</a>
+          {% if crop.user == request.user %}
+            <div class="col-md-4">
+              <div class="card mb-4">
+                <div class="card-body">
+                  <h5 class="card-title">{{ crop.name }}</h5>
+                  <a href="{% url 'crop_detail' crop.id %}" class="btn btn-primary">View Details</a>
+                </div>
               </div>
             </div>
-          </div>
+          {% endif %}
         {% endfor %}
       </div>
     </div>
 
     <!-- Recent Posts Section -->
-    <div class="recent-posts mt-5">
+    <div class="recent-posts mt-4">
       <h3>Recent Posts</h3>
       <div class="list-group">
         {% for post in recent_posts %}
@@ -45,7 +41,7 @@
     </div>
 
     <!-- Marketplace Listings Section -->
-    <div class="marketplace-listings mt-5">
+    <div class="marketplace-listings mt-4">
       <h3>Marketplace Listings</h3>
       <div class="row">
         {% for listing in marketplace_listings %}

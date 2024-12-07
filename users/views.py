@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from .models import Crop, ForumPost, ForumComment, CropListing, TransactionRecord
 from .forms import UserRegistrationForm, UserProfileForm, CropForm, ForumPostForm, ForumCommentForm, CropListingForm
@@ -67,6 +67,14 @@ def _create_user_and_profile(user_form, profile_form, request):
     except Exception as e:
         logger.error(f"Error creating user and profile: {e}")
         return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form, 'errors': {'__all__': [str(e)]}})
+    
+@login_required
+def profile_view(request):
+    try:
+        profile = request.user.userprofile
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=request.user)
+    return render(request, 'users/profile.html', {'profile': profile})
 
 def activate(request, uidb64, token):
     try:
@@ -84,9 +92,6 @@ def activate(request, uidb64, token):
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
-
-from django.shortcuts import render
-from .models import Crop, ForumPost, CropListing
 
 def home_view(request):
     featured_crops = Crop.objects.all()[:3]  # Get the first 3 crops
@@ -114,7 +119,6 @@ def weather_view(request):
         return render(request, 'users/weather.html', {'weather_data': weather_data})
     else:
         return redirect('login')
-
 
 @csrf_exempt
 @login_required
@@ -170,7 +174,7 @@ def mpesa_payment_view(request):
             logger.error(f"Error initiating MPesa payment: {e}")
             return JsonResponse({'error': 'Failed to initiate MPesa payment'}, status=500)
     return JsonResponse({'error': 'Invalid request'}, status=400)
-    
+
 def mpesa_payment_form_view(request):
     return render(request, 'users/mpesa_payment.html')
 
@@ -191,15 +195,23 @@ def profile_update_view(request):
         form = UserProfileForm(instance=profile)
     return render(request, 'users/profile_update.html', {'form': form})
 
+def is_manager_or_admin(user):
+    return user.groups.filter(name__in=['Manager', 'Admin']).exists()
+
+@user_passes_test(is_manager_or_admin)
 @login_required
 def add_crop(request):
+    logger.info(f"User {request.user.username} is attempting to add a crop")
     if request.method == 'POST':
         form = CropForm(request.POST)
         if form.is_valid():
             crop = form.save(commit=False)
             crop.user = request.user
             crop.save()
+            logger.info(f"Crop {crop.name} added by user {request.user.username}")
             return redirect('crop_list')
+        else:
+            logger.warning(f"Form is not valid: {form.errors}")
     else:
         form = CropForm()
     return render(request, 'users/add_crop.html', {'form': form})
@@ -211,7 +223,9 @@ def crop_list(request):
 
 @login_required
 def crop_detail(request, crop_id):
-    crop = get_object_or_404(Crop, id=crop_id, user=request.user)
+    crop = get_object_or_404(Crop, id=crop_id)
+    if crop.user != request.user:
+        return redirect('home')  # Redirect to home if the crop does not belong to the user
     yield_prediction = predict_yield(crop)
     insights = provide_actionable_insights(crop)
     return render(request, 'users/crop_detail.html', {'crop': crop, 'yield_prediction': yield_prediction, 'insights': insights})
