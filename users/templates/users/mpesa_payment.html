@@ -1,0 +1,47 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Mpesa Payment{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2 class="mb-4 text-center">Initiate Mpesa Payment</h2>
+        <form id="mpesa-payment-form" method="post" action="{% url 'mpesa_payment' %}" class="needs-validation" novalidate>
+          {% csrf_token %}
+          <input type="hidden" id="listing_id" name="listing_id">
+          <div class="form-group">
+            <input type="text" class="form-control form-control-lg" id="phone_number" name="phone_number" placeholder="Phone Number" required>
+            <div class="invalid-feedback">
+              Please provide a valid phone number.
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="number" class="form-control form-control-lg" id="amount" name="amount" placeholder="Amount" required>
+            <div class="invalid-feedback">
+              Please provide a valid amount.
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Pay with MPesa</button>
+        </form>
+        <div id="message" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/form-validation.js' %}"></script>
+  <script src="{% static 'js/payments.js' %}"></script>
+  <script>
+    $('#mpesaPaymentModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      var listingId = button.data('listing-id');
+      var listingPrice = button.data('listing-price');
+      var modal = $(this);
+      modal.find('#listing_id').val(listingId);
+      modal.find('#amount').val(listingPrice);
+    });
+  </script>
+{% endblock %}

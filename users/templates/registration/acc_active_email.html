@@ -1,0 +1,12 @@
+Hi {{ user.username }},
+
+Thank you for registering at AgriSmart. We're excited to have you on board!
+
+To complete your registration, please click the link below to activate your account:
+    http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" - Activate your account
+
+If the above link doesn't work, please copy and paste the following URL into your browser:
+    http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+    
+    Thank you,
+    The AgriSmart Team

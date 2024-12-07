@@ -1,0 +1,30 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Listing List{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="mb-4 text-center">Listing List</h1>
+    <div class="text-center mb-4">
+      <a href="{% url 'add_listing' %}" class="btn btn-primary">Add a Listing</a>
+    </div>
+    {% if listings %}
+      <ul class="list-group text-center">
+        {% for listing in listings %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+              <a href="{% url 'listing_detail' listing.id %}">{{ listing.crop.name }}</a> - {{ listing.quantity }} kg - Ksh{{ listing.price }}
+            </span>
+            <span>
+              <a href="{% url 'edit_listing' listing.id %}" class="btn btn-sm btn-secondary ml-2">Edit</a>
+              <a href="{% url 'delete_listing' listing.id %}" class="btn btn-sm btn-danger ml-2">Delete</a>
+              <button class="btn btn-sm btn-success ml-2" data-toggle="modal" data-target="#mpesaPaymentModal" data-listing-id="{{ listing.id }}" data-listing-price="{{ listing.price }}">Pay with MPesa</button>
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-center">No listings available. <a href="{% url 'add_listing' %}">Add a listing</a> to get started.</p>
+    {% endif %}
+  </div>
+{% endblock %}

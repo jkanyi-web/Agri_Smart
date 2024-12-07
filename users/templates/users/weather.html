@@ -1,0 +1,25 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Weather{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2 class="mb-4 text-center">Weather Forecast for {{ weather_data.name }}</h2>
+        {% if weather_data %}
+          <div class="card">
+            <div class="card-body">
+              <p class="card-text text-center"><strong>Temperature:</strong> {{ weather_data.main.temp }}°C</p>
+              <p class="card-text text-center"><strong>Weather:</strong> {{ weather_data.weather.0.description }}</p>
+              <p class="card-text text-center"><strong>Humidity:</strong> {{ weather_data.main.humidity }}%</p>
+              <p class="card-text text-center"><strong>Wind Speed:</strong> {{ weather_data.wind.speed }} m/s</p>
+            </div>
+          </div>
+        {% else %}
+          <p class="text-center">Could not retrieve weather data. Please try again later.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AgriSmart - Your smart agriculture assistant">
+  <meta name="keywords" content="agriculture, smart farming, crops, marketplace, forum, weather, MPesa">
+  <title>{% block title %}AgriSmart{% endblock %}</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <a class="navbar-brand" href="{% url 'home' %}">AgriSmart</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'about' %}">About Us</a>
+        </li>
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'crop_list' %}">Crops</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'listing_list' %}">Marketplace</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'forum' %}">Forum</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'weather' %}">Weather</a>
+          </li>
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}" class="form-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link mt-2" style="padding: 0; border: none; background: none;">Logout</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+  <div class="container mt-5 flex-grow-1">
+    {% block content %}
+    {% endblock %}
+  </div>
+  <footer class="footer bg-light text-center">
+    <div class="container">
+      <span class="text-muted">© 2024 AgriSmart</span>
+      <p>Contact us: <a href="mailto:info@agrismart.com">jkanyi757@gmail.com</a> | Phone: +254 728 658 873</p>
+      <p>Follow us on:
+        <a href="https://www.facebook.com/victor.kanyi.94" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/V_Kanyi" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.instagram.com/_k.a.n.y.i_/" target="_blank"><i class="fab fa-instagram"></i></a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- MPesa Payment Modal -->
+  <div class="modal fade" id="mpesaPaymentModal" tabindex="-1" role="dialog" aria-labelledby="mpesaPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="mpesaPaymentModalLabel">Pay with MPesa</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="mpesa-payment-form" method="post" action="{% url 'mpesa_payment' %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <input type="hidden" id="listing_id" name="listing_id">
+            <div class="form-group">
+              <input type="text" class="form-control form-control-lg" id="phone_number" name="phone_number" placeholder="Phone Number" required>
+              <div class="invalid-feedback">
+                Please provide a valid phone number.
+              </div>
+            </div>
+            <div class="form-group">
+              <input type="number" class="form-control form-control-lg" id="amount" name="amount" placeholder="Amount" required>
+              <div class="invalid-feedback">
+                Please provide a valid amount.
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Pay with MPesa</button>
+          </form>
+          <div id="message" class="mt-3"></div> <!-- Ensure this element exists -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="{% static 'js/scripts.js' %}"></script>
+  <script src="{% static 'js/payments.js' %}"></script>
+  <script src="{% static 'js/modal.js' %}"></script> <!-- Include the new JavaScript file -->
+  {% block scripts %}{% endblock %}
+</body>
+</html>

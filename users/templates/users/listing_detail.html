@@ -1,0 +1,17 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Listing Detail{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="mb-4 text-center">{{ listing.crop.name }}</h1>
+    <div class="card">
+      <div class="card-body text-center">
+        <h5 class="card-title text-center">Crop: {{ listing.crop.name }}</h5>
+        <p class="card-text text-center">Quantity: {{ listing.quantity }} kg</p>
+        <p class="card-text text-center">Price: Ksh{{ listing.price }}</p>
+        <a href="{% url 'listing_list' %}" class="btn btn-primary text-center">Marketplace</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

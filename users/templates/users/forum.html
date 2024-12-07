@@ -1,0 +1,26 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Forum{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="mb-4 text-center">Forum</h1>
+    <ul class="list-group">
+      {% for post in posts %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>
+            <a href="{% url 'forum_post_detail' post.id %}">{{ post.title }}</a> by {{ post.user.username }}
+          </span>
+          <span>
+            <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-secondary ml-2">Edit</a>
+            <a href="{% url 'delete_post' post.id %}" class="btn btn-sm btn-danger ml-2">Delete</a>
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="text-center mt-4">
+      <a href="{% url 'add_post' %}" class="btn btn-primary">Add a Post</a>
+    </div>
+  </div>
+{% endblock %}

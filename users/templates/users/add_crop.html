@@ -1,0 +1,59 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Add Crop{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h1 class="mb-4 text-center">Add Crop</h1>
+        <form method="post" class="needs-validation" novalidate>
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-6 mb-3">
+              {{ form.name }}
+              <div class="invalid-feedback">
+                Please provide a valid crop name.
+              </div>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+              {{ form.planting_date }}
+              <div class="invalid-feedback">
+                Please provide a valid planting date.
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 mb-3">
+              {{ form.growth_stage }}
+              <div class="invalid-feedback">
+                Please provide a valid growth stage.
+              </div>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+              {{ form.next_activity }}
+              <div class="invalid-feedback">
+                Please provide a valid next activity.
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 mb-3">
+              {{ form.next_activity_date }}
+              <div class="invalid-feedback">
+                Please provide a valid next activity date.
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Add Crop</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/form-validation.js' %}"></script>
+  <script src="{% static 'js/tooltips.js' %}"></script>
+{% endblock %}

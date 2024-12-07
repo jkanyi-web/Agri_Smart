@@ -1,0 +1,22 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+  <div class="register-container">
+    <h2 class="mb-4 text-center">Login</h2>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>
+    </form>
+    <p class="text-center mt-5">
+      Don't have an account? <a class="btn btn-primary" href="{% url 'register' %}">Register here</a>
+    </p>
+  </div>
+{% endblock %}
