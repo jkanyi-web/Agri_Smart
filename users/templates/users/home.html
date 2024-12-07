@@ -8,7 +8,7 @@
     <p>AgriSmart is your smart agriculture assistant designed to help farmers and agricultural enthusiasts achieve their goals. Our platform provides tools and resources to manage crops, connect with other farmers, access the marketplace, and stay updated with the latest weather forecasts. Whether you're a seasoned farmer or just starting out, AgriSmart is here to support you every step of the way.</p>
 
     <!-- Featured Crops Section -->
-    <div class="featured-crops mt-4">
+    {% comment %} <div class="featured-crops mt-4">
       <h3>Featured Crops</h3>
       <div class="row">
         {% for crop in featured_crops %}
@@ -24,10 +24,10 @@
           {% endif %}
         {% endfor %}
       </div>
-    </div>
+    </div> {% endcomment %}
 
     <!-- Recent Posts Section -->
-    <div class="recent-posts mt-4">
+    {% comment %} <div class="recent-posts mt-4">
       <h3>Recent Posts</h3>
       <div class="list-group">
         {% for post in recent_posts %}
@@ -38,10 +38,10 @@
           </a>
         {% endfor %}
       </div>
-    </div>
+    </div> {% endcomment %}
 
     <!-- Marketplace Listings Section -->
-    <div class="marketplace-listings mt-4">
+    {% comment %} <div class="marketplace-listings mt-4">
       <h3>Marketplace Listings</h3>
       <div class="row">
         {% for listing in marketplace_listings %}
@@ -56,5 +56,5 @@
         {% endfor %}
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 {% endblock %}
