@@ -6,6 +6,7 @@ from .views import (
     listing_list, add_listing, edit_listing, delete_listing, listing_detail, forum, add_post, add_comment, forum_post_detail, edit_post, delete_post, about_view
 )
 from .api_views import UserListCreateView, UserProfileListCreateView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -16,6 +17,8 @@ urlpatterns = [
     path('weather/', weather_view, name='weather'),
     path('api/users/', UserListCreateView.as_view(), name='api_users'),
     path('api/userprofiles/', UserProfileListCreateView.as_view(), name='api_userprofiles'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('about/', about_view, name='about'),
     path('mpesa/payment/', mpesa_payment_view, name='mpesa_payment'),
     path('mpesa/callback/', mpesa_callback_view, name='mpesa_callback'),
