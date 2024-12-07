@@ -1,17 +1,7 @@
-/* Color Palette */
-:root {
-    --primary-color: #4CAF50; /* Green */
-    --secondary-color: #8B4513; /* Brown */
-    --accent-color: #FFD700; /* Yellow */
-    --background-color: #F0F8FF; /* Light Blue */
-    --text-color: #333333; /* Dark Gray */
-}
-
-/* General Styles */
 body {
     font-family: 'Open Sans', sans-serif;
-    background-color: #4CAF50;
-    color: var(--text-color);
+    background-color: whitesmoke;
+    color: var(--background-color);
     margin: 0;
     padding: 0;
     display: flex;
@@ -34,46 +24,7 @@ body {
 }
 
 .footer {
-    background-color: var(--secondary-color);
-    color: white;
     text-align: center;
     padding: 20px 0;
     margin-top: auto;
-}
-
-.footer a {
-    color: var(--accent-color);
-}
-
-.button-primary {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.button-primary:hover {
-    background-color: darken(var(--primary-color), 10%);
-}
-
-.card {
-    border: 1px solid var(--secondary-color);
-    border-radius: 10px;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 10px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-.card-body {
-    padding: 20px;
 }
