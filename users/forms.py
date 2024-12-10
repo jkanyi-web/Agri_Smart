@@ -100,6 +100,6 @@ class CropListingForm(forms.ModelForm):
         fields = ['crop', 'price', 'quantity']
         widgets = {
             'crop': forms.Select(attrs={'class': 'form-control form-control-lg'}, choices=[('', 'Choose crop')] + [(crop.id, crop.name) for crop in Crop.objects.all()]),
-            'price': forms.NumberInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Price', 'min': '0'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Quantity', 'min': '0'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Price(Ksh)', 'min': '0'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Quantity(Kg)', 'min': '0'}),
         }

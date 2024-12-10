@@ -5,9 +5,9 @@
 {% block content %}
   <div class="container">
     <h2 class="mb-4">Welcome to AgriSmart</h2>
-    <p>AgriSmart is your smart agriculture assistant designed to help farmers and agricultural enthusiasts achieve their goals. Our platform provides tools and resources to manage crops, connect with other farmers, access the marketplace, and stay updated with the latest weather forecasts. Whether you're a seasoned farmer or just starting out, AgriSmart is here to support you every step of the way.</p>
+    <p class="font-weight-bold">AgriSmart is your smart agriculture assistant designed to help farmers and agricultural enthusiasts achieve their goals. Our platform provides tools and resources to manage crops, connect with other farmers, access the marketplace, and stay updated with the latest weather forecasts. Whether you're a seasoned farmer or just starting out, AgriSmart is here to support you every step of the way.</p>
 
-    <!-- Featured Crops Section -->
+    {% comment %} <!-- Featured Crops Section -->
     <div class="featured-crops mt-5">
       <h3>Featured Crops</h3>
       <div class="row">
@@ -22,7 +22,7 @@
           </div>
         {% endfor %}
       </div>
-    </div>
+    </div> 
 
     <!-- Recent Posts Section -->
     <div class="recent-posts mt-5">
@@ -54,5 +54,6 @@
         {% endfor %}
       </div>
     </div>
+    {% endcomment %}
   </div>
 {% endblock %}
