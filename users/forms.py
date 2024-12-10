@@ -103,3 +103,7 @@ class CropListingForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Price(Ksh)', 'min': '0'}),
             'quantity': forms.NumberInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Quantity(Kg)', 'min': '0'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['crop'].choices = [('', 'Choose crop')] + [(crop.id, crop.name) for crop in Crop.objects.all()]
