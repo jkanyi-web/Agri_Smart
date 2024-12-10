@@ -9,13 +9,13 @@ __pycache__/
 venv/
 
 # Ignore Django migrations
-*/migrations/
+# */migrations/
 
 # Ignore database files
 *.sqlite3
 
 # Ignore static files
-staticfiles/
+# staticfiles/
 
 # Ignore media files
 media/
