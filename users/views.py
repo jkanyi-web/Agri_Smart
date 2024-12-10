@@ -43,7 +43,6 @@ def _handle_post_request(request):
         return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form})
     errors = {**user_form.errors, **profile_form.errors}
     return JsonResponse({'errors': errors}, status=400)
-
 def _create_user_and_profile(user_form, profile_form, request):
     try:
         logger.info("Creating user and profile")
@@ -51,9 +50,14 @@ def _create_user_and_profile(user_form, profile_form, request):
         user.is_active = False  # Deactivate account until it is confirmed
         user.set_password(user_form.cleaned_data['password'])
         user.save()
+        logger.info(f"User created: {user.username}")
+
         profile = profile_form.save(commit=False)
         profile.user = user
+        logger.info(f"Profile data: farm_location={profile.farm_location}, farm_size={profile.farm_size}")
         profile.save()
+        logger.info(f"Profile created for user: {user.username}")
+
         current_site = get_current_site(request)
         mail_subject = 'Welcome to AgriSmart! Activate your account'
         message = render_to_string('registration/acc_active_email.html', {
@@ -63,10 +67,13 @@ def _create_user_and_profile(user_form, profile_form, request):
             'token': default_token_generator.make_token(user),
         })
         to_email = user_form.cleaned_data.get('email')
+        logger.info(f"Sending activation email to {to_email}")
         send_mail(mail_subject, message, settings.DEFAULT_FROM_EMAIL, [to_email])
+        logger.info("Activation email sent successfully")
         return render(request, 'registration/registration_complete.html')
     except Exception as e:
         logger.error(f"Error creating user and profile: {e}")
+        user.delete()  # Clean up the user if profile creation fails
         return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form, 'errors': {'__all__': [str(e)]}})
     
 @login_required
@@ -199,7 +206,7 @@ def profile_update_view(request):
 def is_manager_or_admin(user):
     return user.groups.filter(name__in=['Manager', 'Admin']).exists()
 
-@user_passes_test(is_manager_or_admin)
+# @user_passes_test(is_manager_or_admin)
 @login_required
 def add_crop(request):
     logger.info(f"User {request.user.username} is attempting to add a crop")
@@ -226,7 +233,7 @@ def crop_list(request):
 def crop_detail(request, crop_id):
     crop = get_object_or_404(Crop, id=crop_id)
     if crop.user != request.user:
-        return redirect('home')  # Redirect to home if the crop does not belong to the user
+        return redirect('home')
     yield_prediction = predict_yield(crop)
     insights = provide_actionable_insights(crop)
     return render(request, 'users/crop_detail.html', {'crop': crop, 'yield_prediction': yield_prediction, 'insights': insights})
