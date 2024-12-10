@@ -1,9 +1,6 @@
-# settings.py
-
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-from django.conf import settings
 import django_heroku
 import dj_database_url
 
@@ -86,14 +83,7 @@ WSGI_APPLICATION = 'agri_smart.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'agri_smart_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.config(default=os.getenv('JAWSDB_URL'))
 }
 
 # Password validation
@@ -130,8 +120,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'), )
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# Activate Django-Heroku.
 django_heroku.settings(locals())
 
 # Redirect URLs after login and logout
@@ -155,7 +146,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': settings.SECRET_KEY,
+    'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
