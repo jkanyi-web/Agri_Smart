@@ -44,11 +44,13 @@ def _handle_post_request(request):
     errors = {**user_form.errors, **profile_form.errors}
     return JsonResponse({'errors': errors}, status=400)
 def _create_user_and_profile(user_form, profile_form, request):
+    user = None
     try:
         return _create_user_and_profile_logic(user_form, profile_form, request)
     except Exception as e:
         logger.error(f"Error creating user and profile: {e}")
-        user.delete()  # Clean up the user if profile creation fails
+        if user:
+            user.delete()  # Clean up the user if profile creation fails
         return render(request, 'users/register.html', {'user_form': user_form, 'profile_form': profile_form, 'errors': {'__all__': [str(e)]}})
 
 def _create_user_and_profile_logic(user_form, profile_form, request):
