@@ -4,6 +4,7 @@ import dj_database_url
 from dotenv import load_dotenv
 from datetime import timedelta
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -30,6 +31,7 @@ ALLOWED_HOSTS = [
     'agri-smart.fly.dev',
     'www.agri-smart.fly.dev'
 ]
+
 
 # Email setup
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
