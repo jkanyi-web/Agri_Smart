@@ -27,3 +27,8 @@ media/
 # Ignore system files
 .DS_Store
 Thumbs.db
+tmp
+.env
+venv\
+.venv
+.venv\

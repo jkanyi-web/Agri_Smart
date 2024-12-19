@@ -1,0 +1,42 @@
+# fly.toml app configuration file for agri-smart
+
+app = 'agri-smart'
+primary_region = 'jnb'
+console_command = '/code/manage.py shell'
+
+[build]
+
+[deploy]
+  release_command = 'python manage.py migrate --noinput'
+
+[env]
+  PORT = '8000'
+
+[processes]
+  app = 'gunicorn --bind :8000 --workers 2 agri_smart.wsgi'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[[statics]]
+  guest_path = '/code/static'
+  url_prefix = '/static/'
+
+[[services]]
+  internal_port = 8000
+  external_port = 80
+  protocol = "tcp"
+  processes = ['app']  # Link the 'app' process to the service
+
+  [[services.ports]]
+    port = 80
