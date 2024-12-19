@@ -13,6 +13,7 @@
   - [🛠 Built With ](#-built-with-)
     - [Tech Stack ](#tech-stack-)
     - [Key Features ](#key-features-)
+    - [🚀 Live Demo](#live-demo)
   - [💻 Getting Started ](#-getting-started-)
     - [Prerequisites](#prerequisites)
     - [Setup](#setup)
@@ -65,6 +66,12 @@ Agri_Smart is a comprehensive platform designed to assist farmers with various a
 - Users can initiate MPesa payments for marketplace transactions.
 - Users can view weather updates.
 - Users can participate in forums by creating posts and comments.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 🚀 Live Demo <a name="live-demo"></a>
+
+- [Live Demo Link](https://agri-smart.fly.dev)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

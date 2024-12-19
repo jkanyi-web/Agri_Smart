@@ -1,9 +1,9 @@
-# settings.py
-
 from pathlib import Path
 import os
+import dj_database_url
 from dotenv import load_dotenv
-from django.conf import settings
+from datetime import timedelta
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -18,13 +18,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == 'True'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://agri-smart.fly.dev'
+]
+
+# Allowed Hosts
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'c5da-102-210-29-6.ngrok-free.app',
+    'agri-smart.fly.dev',
+    'www.agri-smart.fly.dev'
 ]
+
 
 # Email setup
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -53,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,17 +94,23 @@ WSGI_APPLICATION = 'agri_smart.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+try:
+    DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'  # Ensure DEBUG is boolean
+except Exception as e:
+    print("DEBUG parsing error:", e)
+    DEBUG = False
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'agri_smart_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+} if DEBUG else {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL') or ValueError("DATABASE_URL is not set in the environment.")
+    )
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -130,10 +144,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / 'static',
 ]
 
 # Redirect URLs after login and logout
@@ -148,8 +164,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-from datetime import timedelta
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -157,7 +171,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': settings.SECRET_KEY,
+    'SIGNING_KEY': SECRET_KEY,  # Removed unnecessary settings import
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
